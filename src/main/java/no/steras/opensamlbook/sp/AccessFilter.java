@@ -21,8 +21,11 @@ import org.opensaml.saml.saml2.binding.encoding.impl.HTTPRedirectDeflateEncoder;
 import org.opensaml.saml.saml2.core.*;
 import org.opensaml.saml.saml2.metadata.Endpoint;
 import org.opensaml.saml.saml2.metadata.SingleSignOnService;
+import org.opensaml.xmlsec.SecurityConfigurationSupport;
+import org.opensaml.xmlsec.SignatureSigningConfiguration;
 import org.opensaml.xmlsec.SignatureSigningParameters;
 import org.opensaml.xmlsec.context.SecurityParametersContext;
+import org.opensaml.xmlsec.signature.support.SignatureConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -98,7 +101,10 @@ public class AccessFilter implements Filter {
 
         SignatureSigningParameters signatureSigningParameters = new SignatureSigningParameters();
         signatureSigningParameters.setSigningCredential(SPCredentials.getCredential());
-        context.getSubcontext(SecurityParametersContext.class, true).setSignatureSigningParameters();
+        signatureSigningParameters.setSignatureAlgorithm(SignatureConstants.ALGO_ID_SIGNATURE_RSA_SHA256);
+
+
+        context.getSubcontext(SecurityParametersContext.class, true).setSignatureSigningParameters(signatureSigningParameters);
 
         context.setMessage(authnRequest);
 

@@ -37,6 +37,7 @@ public class SPCredentials {
 
             Criterion criterion = new EntityIdCriterion(KEY_ENTRY_ID);
             CriteriaSet criteriaSet = new CriteriaSet();
+            criteriaSet.add(criterion);
 
             credential = resolver.resolveSingle(criteriaSet);
 
