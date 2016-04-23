@@ -96,7 +96,10 @@ public class AccessFilter implements Filter {
         SAMLEndpointContext endpointContext = peerEntityContext.getSubcontext(SAMLEndpointContext.class, true);
         endpointContext.setEndpoint(getIPDEndpoint());
 
-        
+        SignatureSigningParameters signatureSigningParameters = new SignatureSigningParameters();
+        signatureSigningParameters.setSigningCredential(SPCredentials.getCredential());
+        context.getSubcontext(SecurityParametersContext.class, true).setSignatureSigningParameters();
+
         context.setMessage(authnRequest);
 
 

@@ -1,6 +1,9 @@
 package no.steras.opensamlbook.sp;
 
 import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
+import net.shibboleth.utilities.java.support.resolver.Criterion;
+import net.shibboleth.utilities.java.support.resolver.ResolverException;
+import org.opensaml.core.criterion.EntityIdCriterion;
 import org.opensaml.security.credential.Credential;
 import org.opensaml.security.credential.impl.KeyStoreCredentialResolver;
 import org.slf4j.Logger;
@@ -18,7 +21,7 @@ import java.util.Map;
  * Created by Privat on 13/05/14.
  */
 public class SPCredentials {
-/*    private static final String KEY_STORE_PASSWORD = "password";
+    private static final String KEY_STORE_PASSWORD = "password";
     private static final String KEY_STORE_ENTRY_PASSWORD = "password";
     private static final String KEY_STORE_PATH = "/SPKeystore.jks";
     private static final String KEY_ENTRY_ID = "SPKey";
@@ -32,11 +35,12 @@ public class SPCredentials {
             passwordMap.put(KEY_ENTRY_ID, KEY_STORE_ENTRY_PASSWORD);
             KeyStoreCredentialResolver resolver = new KeyStoreCredentialResolver(keystore, passwordMap);
 
-            Criteria criteria = new EntityIDCriteria(KEY_ENTRY_ID);
-            CriteriaSet criteriaSet = new CriteriaSet(criteria);
+            Criterion criterion = new EntityIdCriterion(KEY_ENTRY_ID);
+            CriteriaSet criteriaSet = new CriteriaSet();
 
             credential = resolver.resolveSingle(criteriaSet);
-        } catch (org.opensaml.xml.security.SecurityException e) {
+
+        } catch (ResolverException e) {
             throw new RuntimeException("Something went wrong reading credentials", e);
         }
     }
@@ -57,5 +61,5 @@ public class SPCredentials {
         return credential;
     }
 
-    */
+
 }
