@@ -1,18 +1,28 @@
 package no.steras.opensamlbook.sp;
 
+import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import no.steras.opensamlbook.OpenSAMLUtils;
 import no.steras.opensamlbook.idp.IDPConstants;
 import org.joda.time.DateTime;
+import org.joda.time.chrono.ISOChronology;
 import org.opensaml.core.config.InitializationException;
 import org.opensaml.core.config.InitializationService;
+import org.opensaml.core.config.Initializer;
+import org.opensaml.messaging.context.InOutOperationContext;
 import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.messaging.encoder.MessageEncodingException;
 import org.opensaml.saml.common.SAMLObject;
+
+import org.opensaml.saml.common.messaging.context.SAMLEndpointContext;
+import org.opensaml.saml.common.messaging.context.SAMLMessageInfoContext;
+import org.opensaml.saml.common.messaging.context.SAMLPeerEntityContext;
 import org.opensaml.saml.common.xml.SAMLConstants;
 import org.opensaml.saml.saml2.binding.encoding.impl.HTTPRedirectDeflateEncoder;
 import org.opensaml.saml.saml2.core.*;
 import org.opensaml.saml.saml2.metadata.Endpoint;
 import org.opensaml.saml.saml2.metadata.SingleSignOnService;
+import org.opensaml.xmlsec.SignatureSigningParameters;
+import org.opensaml.xmlsec.context.SecurityParametersContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -67,20 +77,40 @@ public class AccessFilter implements Filter {
     }
 
     private void redirectUserWithRequest(HttpServletResponse httpServletResponse, AuthnRequest authnRequest) {
-        HttpServletResponseAdapter responseAdapter = new HttpServletResponseAdapter(httpServletResponse, true);
-        BasicSAMLMessageContext<SAMLObject, AuthnRequest, SAMLObject> context = new BasicSAMLMessageContext<SAMLObject, AuthnRequest, SAMLObject>();
+      /*  BasicSAMLMessageContext<SAMLObject, AuthnRequest, SAMLObject> context = new BasicSAMLMessageContext<SAMLObject, AuthnRequest, SAMLObject>();
         context.setPeerEntityEndpoint(getIPDEndpoint());
         context.setOutboundSAMLMessage(authnRequest);
         context.setOutboundMessageTransport(responseAdapter);
         context.setOutboundSAMLMessageSigningCredential(SPCredentials.getCredential());
-
+*/
         HTTPRedirectDeflateEncoder encoder = new HTTPRedirectDeflateEncoder();
-        MessageContext s = new MessageContext();
+        MessageContext context = new MessageContext();
+
+        SAMLPeerEntityContext peerEntityContext = context.getSubcontext(SAMLPeerEntityContext.class, true);
+        peerEntityContext.setEntityId(IDPConstants.IDP_ENTITY_ID);
+
+        /*SAMLMessageInfoContext msgInfoContext = context.getSubcontext(SAMLMessageInfoContext.class, true);
+        msgInfoContext.setMessageIssueInstant(new DateTime(ssoRequest.getTime(), ISOChronology.getInstanceUTC()));
+        msgInfoContext.setMessageId(getMessageID());
+*/
+        SAMLEndpointContext endpointContext = peerEntityContext.getSubcontext(SAMLEndpointContext.class, true);
+        endpointContext.setEndpoint(getIPDEndpoint());
+
         
-        s.addSubcontext();
-        encoder.setMessageContext();
+        context.setMessage(authnRequest);
+
+
+        encoder.setMessageContext(context);
+        encoder.setHttpServletResponse(httpServletResponse);
+
+        try {
+            encoder.initialize();
+        } catch (ComponentInitializationException e) {
+            e.printStackTrace();
+        }
+
         logger.info("AuthnRequest: ");
-        OpenSAMLUtils.logSAMLObject(authnRequest);
+        //OpenSAMLUtils.logSAMLObject(authnRequest);
 
         logger.info("Redirecting to IDP");
         try {
