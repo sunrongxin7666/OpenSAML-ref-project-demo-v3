@@ -1,13 +1,11 @@
 package no.steras.opensamlbook;
 
-import org.opensaml.common.impl.SecureRandomIdentifierGenerator;
-import org.opensaml.ws.soap.soap11.Body;
-import org.opensaml.ws.soap.soap11.Envelope;
-import org.opensaml.xml.Configuration;
-import org.opensaml.xml.XMLObject;
-import org.opensaml.xml.XMLObjectBuilderFactory;
-import org.opensaml.xml.io.Marshaller;
-import org.opensaml.xml.io.MarshallingException;
+import net.shibboleth.utilities.java.support.security.RandomIdentifierGenerationStrategy;
+import org.opensaml.core.xml.XMLObject;
+import org.opensaml.core.xml.XMLObjectBuilderFactory;
+import org.opensaml.core.xml.config.XMLObjectProviderRegistrySupport;
+import org.opensaml.core.xml.io.Marshaller;
+import org.opensaml.core.xml.io.MarshallingException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
@@ -30,20 +28,17 @@ import java.security.NoSuchAlgorithmException;
  */
 public class OpenSAMLUtils {
     private static Logger logger = LoggerFactory.getLogger(OpenSAMLUtils.class);
-    private static SecureRandomIdentifierGenerator secureRandomIdGenerator;
+    private static RandomIdentifierGenerationStrategy secureRandomIdGenerator;
 
     static {
-        try {
-            secureRandomIdGenerator = new SecureRandomIdentifierGenerator();
-        } catch (NoSuchAlgorithmException e) {
-            logger.error(e.getMessage(), e);
-        }
+        secureRandomIdGenerator = new RandomIdentifierGenerationStrategy();
+
     }
 
     public static <T> T buildSAMLObject(final Class<T> clazz) {
         T object = null;
         try {
-            XMLObjectBuilderFactory builderFactory = Configuration.getBuilderFactory();
+            XMLObjectBuilderFactory builderFactory = XMLObjectProviderRegistrySupport.getBuilderFactory();
             QName defaultElementName = (QName)clazz.getDeclaredField("DEFAULT_ELEMENT_NAME").get(null);
             object = (T)builderFactory.getBuilder(defaultElementName).buildObject(defaultElementName);
         } catch (IllegalAccessException e) {
@@ -68,7 +63,7 @@ public class OpenSAMLUtils {
             builder = factory.newDocumentBuilder();
 
             Document document = builder.newDocument();
-            Marshaller out = Configuration.getMarshallerFactory().getMarshaller(object);
+            Marshaller out = XMLObjectProviderRegistrySupport.getMarshallerFactory().getMarshaller(object);
             out.marshall(object, document);
 
             Transformer transformer = TransformerFactory.newInstance().newTransformer();
@@ -87,7 +82,7 @@ public class OpenSAMLUtils {
             logger.error(e.getMessage(), e);
         }
     }
-
+/*
     public static Envelope wrapInSOAPEnvelope(final XMLObject xmlObject) throws IllegalAccessException {
         Envelope envelope = OpenSAMLUtils.buildSAMLObject(Envelope.class);
         Body body = OpenSAMLUtils.buildSAMLObject(Body.class);
@@ -98,4 +93,5 @@ public class OpenSAMLUtils {
 
         return envelope;
     }
+    */
 }

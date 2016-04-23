@@ -5,27 +5,6 @@ import no.steras.opensamlbook.sp.SPConstants;
 import no.steras.opensamlbook.sp.SPCredentials;
 import org.apache.xml.security.utils.EncryptionConstants;
 import org.joda.time.DateTime;
-import org.opensaml.common.SAMLObject;
-import org.opensaml.common.impl.SecureRandomIdentifierGenerator;
-import org.opensaml.saml2.core.*;
-import org.opensaml.saml2.encryption.Encrypter;
-import org.opensaml.saml2.metadata.provider.MetadataProviderException;
-import org.opensaml.security.SAMLSignatureProfileValidator;
-import org.opensaml.ws.soap.soap11.Body;
-import org.opensaml.ws.soap.soap11.Envelope;
-import org.opensaml.xml.Configuration;
-import org.opensaml.xml.XMLObject;
-import org.opensaml.xml.encryption.EncryptionException;
-import org.opensaml.xml.encryption.EncryptionParameters;
-import org.opensaml.xml.encryption.KeyEncryptionParameters;
-import org.opensaml.xml.io.*;
-import org.opensaml.xml.parse.BasicParserPool;
-import org.opensaml.xml.parse.XMLParserException;
-import org.opensaml.xml.schema.XSString;
-import org.opensaml.xml.schema.impl.XSStringBuilder;
-import org.opensaml.xml.security.keyinfo.KeyInfoGeneratorFactory;
-import org.opensaml.xml.signature.*;
-import org.opensaml.xml.validation.ValidationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
@@ -57,7 +36,7 @@ import java.security.spec.ECField;
  * Created by Privat on 4/6/14.
  */
 public class ArtifactResolutionServlet extends HttpServlet {
-    private static Logger logger = LoggerFactory.getLogger(ArtifactResolutionServlet.class);
+   /* private static Logger logger = LoggerFactory.getLogger(ArtifactResolutionServlet.class);
 
     @Override
     protected void doPost(final HttpServletRequest req, final HttpServletResponse resp) throws ServletException, IOException {
@@ -326,6 +305,6 @@ public class ArtifactResolutionServlet extends HttpServlet {
         } catch (TransformerException e) {
             e.printStackTrace();
         }
-    }
+    }*/
 
 }

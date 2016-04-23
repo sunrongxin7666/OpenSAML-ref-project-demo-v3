@@ -4,25 +4,6 @@ import no.steras.opensamlbook.OpenSAMLUtils;
 import no.steras.opensamlbook.idp.IDPConstants;
 import no.steras.opensamlbook.idp.IDPCredentials;
 import org.joda.time.DateTime;
-import org.opensaml.saml2.core.*;
-import org.opensaml.saml2.encryption.Decrypter;
-import org.opensaml.security.SAMLSignatureProfileValidator;
-import org.opensaml.ws.soap.client.BasicSOAPMessageContext;
-import org.opensaml.ws.soap.client.http.HttpClientBuilder;
-import org.opensaml.ws.soap.client.http.HttpSOAPClient;
-import org.opensaml.ws.soap.common.SOAPException;
-import org.opensaml.ws.soap.soap11.Envelope;
-import org.opensaml.xml.Configuration;
-import org.opensaml.xml.XMLObject;
-import org.opensaml.xml.encryption.DecryptionException;
-import org.opensaml.xml.encryption.InlineEncryptedKeyResolver;
-import org.opensaml.xml.io.MarshallingException;
-import org.opensaml.xml.parse.BasicParserPool;
-import org.opensaml.xml.schema.XSString;
-import org.opensaml.xml.security.SecurityException;
-import org.opensaml.xml.security.keyinfo.StaticKeyInfoCredentialResolver;
-import org.opensaml.xml.signature.*;
-import org.opensaml.xml.validation.ValidationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -36,7 +17,7 @@ import java.io.IOException;
  * Created by Privat on 4/6/14.
  */
 public class ConsumerServlet extends HttpServlet {
-    private static Logger logger = LoggerFactory.getLogger(ConsumerServlet.class);
+   /* private static Logger logger = LoggerFactory.getLogger(ConsumerServlet.class);
 
     @Override
     protected void doGet(final HttpServletRequest req, final HttpServletResponse resp) throws ServletException, IOException {
@@ -206,5 +187,6 @@ public class ConsumerServlet extends HttpServlet {
 
         return artifactResolve;
     }
+    */
 
 }

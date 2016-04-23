@@ -1,12 +1,8 @@
 package no.steras.opensamlbook.sp;
 
-import org.opensaml.xml.security.*;
-import org.opensaml.xml.security.credential.BasicCredential;
-import org.opensaml.xml.security.credential.Credential;
-import org.opensaml.xml.security.credential.KeyStoreCredentialResolver;
-import org.opensaml.xml.security.credential.UsageType;
-import org.opensaml.xml.security.criteria.EntityIDCriteria;
-import org.opensaml.xml.security.x509.X509Credential;
+import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
+import org.opensaml.security.credential.Credential;
+import org.opensaml.security.credential.impl.KeyStoreCredentialResolver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -22,7 +18,7 @@ import java.util.Map;
  * Created by Privat on 13/05/14.
  */
 public class SPCredentials {
-    private static final String KEY_STORE_PASSWORD = "password";
+/*    private static final String KEY_STORE_PASSWORD = "password";
     private static final String KEY_STORE_ENTRY_PASSWORD = "password";
     private static final String KEY_STORE_PATH = "/SPKeystore.jks";
     private static final String KEY_ENTRY_ID = "SPKey";
@@ -60,4 +56,6 @@ public class SPCredentials {
     public static Credential getCredential() {
         return credential;
     }
+
+    */
 }
