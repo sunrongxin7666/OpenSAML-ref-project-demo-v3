@@ -12,16 +12,21 @@
     <dependencies>
         <dependency>
             <groupId>org.opensaml</groupId>
-            <artifactId>opensaml</artifactId>
-            <version>2.6.0</version>
-			<exclusions>
-				<exclusion>
-					<groupId>org.apache.xerces</groupId>
-					<artifactId>xercesImpl</artifactId>
-				</exclusion>
-			</exclusions>
+            <artifactId>opensaml-core</artifactId>
+            <version>3.1.1</version>
         </dependency>
-		<dependency>
+        <dependency>
+            <groupId>org.opensaml</groupId>
+            <artifactId>opensaml-saml-api</artifactId>
+            <version>3.1.1</version>
+        </dependency>
+        <dependency>
+            <groupId>org.opensaml</groupId>
+            <artifactId>opensaml-saml-impl</artifactId>
+            <version>3.1.1</version>
+        </dependency>
+
+        <dependency>
 			<groupId>xerces</groupId>
 			<artifactId>xercesImpl</artifactId>
 			<version>2.10.0</version>

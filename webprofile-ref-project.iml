@@ -1,53 +1,44 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <module org.jetbrains.idea.maven.project.MavenProjectsManager.isMavenModule="true" type="JAVA_MODULE" version="4">
-  <component name="FacetManager">
-    <facet type="web" name="Web">
-      <configuration>
-        <descriptors>
-          <deploymentDescriptor name="web.xml" url="file://$MODULE_DIR$/src/main/webapp/WEB-INF/web.xml" />
-        </descriptors>
-        <webroots>
-          <root url="file://$MODULE_DIR$/src/main/webapp" relative="/" />
-        </webroots>
-        <sourceRoots>
-          <root url="file://$MODULE_DIR$/src/main/java" />
-          <root url="file://$MODULE_DIR$/src/main/resources" />
-        </sourceRoots>
-      </configuration>
-    </facet>
-  </component>
-  <component name="NewModuleRootManager" inherit-compiler-output="false">
+  <component name="NewModuleRootManager" LANGUAGE_LEVEL="JDK_1_5" inherit-compiler-output="false">
     <output url="file://$MODULE_DIR$/target/classes" />
     <output-test url="file://$MODULE_DIR$/target/test-classes" />
     <content url="file://$MODULE_DIR$">
       <sourceFolder url="file://$MODULE_DIR$/src/main/java" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/src/test/java" isTestSource="true" />
       <sourceFolder url="file://$MODULE_DIR$/src/main/resources" type="java-resource" />
       <excludeFolder url="file://$MODULE_DIR$/target" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="library" name="Maven: org.opensaml:opensaml:2.6.0" level="project" />
-    <orderEntry type="library" name="Maven: org.opensaml:openws:1.5.0" level="project" />
-    <orderEntry type="library" name="Maven: org.opensaml:xmltooling:1.4.0" level="project" />
-    <orderEntry type="library" name="Maven: org.bouncycastle:bcprov-jdk15:1.46" level="project" />
-    <orderEntry type="library" name="Maven: commons-codec:commons-codec:1.7" level="project" />
-    <orderEntry type="library" name="Maven: joda-time:joda-time:2.2" level="project" />
-    <orderEntry type="library" name="Maven: ca.juliusdavies:not-yet-commons-ssl:0.3.9" level="project" />
-    <orderEntry type="library" name="Maven: commons-httpclient:commons-httpclient:3.1" level="project" />
-    <orderEntry type="library" name="Maven: org.apache.santuario:xmlsec:1.5.4" level="project" />
-    <orderEntry type="library" scope="RUNTIME" name="Maven: org.apache.xerces:xml-apis:2.10.0" level="project" />
-    <orderEntry type="library" scope="RUNTIME" name="Maven: org.apache.xerces:serializer:2.10.0" level="project" />
-    <orderEntry type="library" scope="RUNTIME" name="Maven: xml-resolver:xml-resolver:1.2" level="project" />
-    <orderEntry type="library" scope="RUNTIME" name="Maven: xalan:xalan:2.7.1" level="project" />
-    <orderEntry type="library" name="Maven: org.slf4j:jcl-over-slf4j:1.7.5" level="project" />
-    <orderEntry type="library" name="Maven: org.slf4j:slf4j-api:1.7.5" level="project" />
-    <orderEntry type="library" name="Maven: org.slf4j:jul-to-slf4j:1.7.5" level="project" />
-    <orderEntry type="library" name="Maven: org.slf4j:log4j-over-slf4j:1.7.5" level="project" />
-    <orderEntry type="library" name="Maven: commons-collections:commons-collections:3.2.1" level="project" />
-    <orderEntry type="library" name="Maven: commons-lang:commons-lang:2.6" level="project" />
+    <orderEntry type="library" name="Maven: org.opensaml:opensaml-core:3.1.1" level="project" />
+    <orderEntry type="library" name="Maven: joda-time:joda-time:2.7" level="project" />
+    <orderEntry type="library" name="Maven: net.shibboleth.utilities:java-support:7.1.1" level="project" />
+    <orderEntry type="library" name="Maven: com.google.code.findbugs:jsr305:3.0.0" level="project" />
+    <orderEntry type="library" name="Maven: com.google.guava:guava:18.0" level="project" />
+    <orderEntry type="library" name="Maven: commons-codec:commons-codec:1.10" level="project" />
+    <orderEntry type="library" name="Maven: org.slf4j:slf4j-api:1.7.10" level="project" />
+    <orderEntry type="library" name="Maven: org.opensaml:opensaml-saml-api:3.1.1" level="project" />
+    <orderEntry type="library" name="Maven: org.opensaml:opensaml-xmlsec-api:3.1.1" level="project" />
+    <orderEntry type="library" name="Maven: org.opensaml:opensaml-security-api:3.1.1" level="project" />
+    <orderEntry type="library" name="Maven: org.apache.santuario:xmlsec:2.0.3" level="project" />
+    <orderEntry type="library" name="Maven: org.codehaus.woodstox:woodstox-core-asl:4.4.1" level="project" />
+    <orderEntry type="library" name="Maven: javax.xml.stream:stax-api:1.0-2" level="project" />
+    <orderEntry type="library" name="Maven: org.codehaus.woodstox:stax2-api:3.1.4" level="project" />
+    <orderEntry type="library" name="Maven: org.cryptacular:cryptacular:1.0" level="project" />
+    <orderEntry type="library" name="Maven: org.bouncycastle:bcprov-jdk15on:1.51" level="project" />
+    <orderEntry type="library" name="Maven: org.opensaml:opensaml-soap-api:3.1.1" level="project" />
+    <orderEntry type="library" name="Maven: org.opensaml:opensaml-messaging-api:3.1.1" level="project" />
+    <orderEntry type="library" name="Maven: org.opensaml:opensaml-profile-api:3.1.1" level="project" />
+    <orderEntry type="library" name="Maven: org.opensaml:opensaml-storage-api:3.1.1" level="project" />
+    <orderEntry type="library" name="Maven: org.opensaml:opensaml-saml-impl:3.1.1" level="project" />
+    <orderEntry type="library" name="Maven: org.opensaml:opensaml-security-impl:3.1.1" level="project" />
+    <orderEntry type="library" name="Maven: org.opensaml:opensaml-xmlsec-impl:3.1.1" level="project" />
+    <orderEntry type="library" name="Maven: org.opensaml:opensaml-soap-impl:3.1.1" level="project" />
     <orderEntry type="library" name="Maven: org.apache.velocity:velocity:1.7" level="project" />
-    <orderEntry type="library" name="Maven: org.owasp.esapi:esapi:2.0.1" level="project" />
+    <orderEntry type="library" name="Maven: commons-collections:commons-collections:3.2.1" level="project" />
+    <orderEntry type="library" name="Maven: commons-lang:commons-lang:2.4" level="project" />
+    <orderEntry type="library" name="Maven: org.apache.httpcomponents:httpclient:4.3.6" level="project" />
+    <orderEntry type="library" name="Maven: org.apache.httpcomponents:httpcore:4.3.3" level="project" />
     <orderEntry type="library" name="Maven: xerces:xercesImpl:2.10.0" level="project" />
     <orderEntry type="library" name="Maven: xml-apis:xml-apis:1.4.01" level="project" />
     <orderEntry type="library" name="Maven: ch.qos.logback:logback-core:1.0.13" level="project" />
@@ -55,4 +46,3 @@
     <orderEntry type="library" scope="PROVIDED" name="Maven: javax.servlet:servlet-api:2.5" level="project" />
   </component>
 </module>
-

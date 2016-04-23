@@ -3,18 +3,16 @@ package no.steras.opensamlbook.sp;
 import no.steras.opensamlbook.OpenSAMLUtils;
 import no.steras.opensamlbook.idp.IDPConstants;
 import org.joda.time.DateTime;
-import org.opensaml.Configuration;
-import org.opensaml.DefaultBootstrap;
-import org.opensaml.common.SAMLObject;
-import org.opensaml.common.binding.BasicSAMLMessageContext;
-import org.opensaml.common.xml.SAMLConstants;
-import org.opensaml.saml2.binding.encoding.HTTPRedirectDeflateEncoder;
-import org.opensaml.saml2.core.*;
-import org.opensaml.saml2.metadata.Endpoint;
-import org.opensaml.saml2.metadata.SingleSignOnService;
-import org.opensaml.ws.message.encoder.MessageEncodingException;
-import org.opensaml.ws.transport.http.HttpServletResponseAdapter;
-import org.opensaml.xml.ConfigurationException;
+import org.opensaml.core.config.InitializationException;
+import org.opensaml.core.config.InitializationService;
+import org.opensaml.messaging.context.MessageContext;
+import org.opensaml.messaging.encoder.MessageEncodingException;
+import org.opensaml.saml.common.SAMLObject;
+import org.opensaml.saml.common.xml.SAMLConstants;
+import org.opensaml.saml.saml2.binding.encoding.impl.HTTPRedirectDeflateEncoder;
+import org.opensaml.saml.saml2.core.*;
+import org.opensaml.saml.saml2.metadata.Endpoint;
+import org.opensaml.saml.saml2.metadata.SingleSignOnService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -33,18 +31,15 @@ public class AccessFilter implements Filter {
 
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
-        Configuration.validateJCEProviders();
-        Configuration.validateNonSunJAXP();
-        
         for (Provider jceProvider : Security.getProviders()) {
             logger.info(jceProvider.getInfo());
         }
 
         try {
             logger.info("Bootstrapping");
-            DefaultBootstrap.bootstrap();
-        } catch (ConfigurationException e) {
-            throw new RuntimeException("Bootstrapping failed");
+            InitializationService.initialize();
+        } catch (InitializationException e) {
+            throw new RuntimeException("Initialization failed");
         }
     }
 
@@ -80,12 +75,16 @@ public class AccessFilter implements Filter {
         context.setOutboundSAMLMessageSigningCredential(SPCredentials.getCredential());
 
         HTTPRedirectDeflateEncoder encoder = new HTTPRedirectDeflateEncoder();
+        MessageContext s = new MessageContext();
+        
+        s.addSubcontext();
+        encoder.setMessageContext();
         logger.info("AuthnRequest: ");
         OpenSAMLUtils.logSAMLObject(authnRequest);
 
         logger.info("Redirecting to IDP");
         try {
-            encoder.encode(context);
+            encoder.encode();
         } catch (MessageEncodingException e) {
             throw new RuntimeException(e);
         }
