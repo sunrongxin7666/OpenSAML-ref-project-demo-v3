@@ -80,22 +80,13 @@ public class AccessFilter implements Filter {
     }
 
     private void redirectUserWithRequest(HttpServletResponse httpServletResponse, AuthnRequest authnRequest) {
-      /*  BasicSAMLMessageContext<SAMLObject, AuthnRequest, SAMLObject> context = new BasicSAMLMessageContext<SAMLObject, AuthnRequest, SAMLObject>();
-        context.setPeerEntityEndpoint(getIPDEndpoint());
-        context.setOutboundSAMLMessage(authnRequest);
-        context.setOutboundMessageTransport(responseAdapter);
-        context.setOutboundSAMLMessageSigningCredential(SPCredentials.getCredential());
-*/
+
         HTTPRedirectDeflateEncoder encoder = new HTTPRedirectDeflateEncoder();
         MessageContext context = new MessageContext();
 
         SAMLPeerEntityContext peerEntityContext = context.getSubcontext(SAMLPeerEntityContext.class, true);
         peerEntityContext.setEntityId(IDPConstants.IDP_ENTITY_ID);
 
-        /*SAMLMessageInfoContext msgInfoContext = context.getSubcontext(SAMLMessageInfoContext.class, true);
-        msgInfoContext.setMessageIssueInstant(new DateTime(ssoRequest.getTime(), ISOChronology.getInstanceUTC()));
-        msgInfoContext.setMessageId(getMessageID());
-*/
         SAMLEndpointContext endpointContext = peerEntityContext.getSubcontext(SAMLEndpointContext.class, true);
         endpointContext.setEndpoint(getIPDEndpoint());
 
