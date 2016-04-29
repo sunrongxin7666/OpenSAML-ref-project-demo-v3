@@ -110,7 +110,7 @@ public class AccessFilter implements Filter {
         }
 
         logger.info("AuthnRequest: ");
-        //OpenSAMLUtils.logSAMLObject(authnRequest);
+        OpenSAMLUtils.logSAMLObject(authnRequest);
 
         logger.info("Redirecting to IDP");
         try {

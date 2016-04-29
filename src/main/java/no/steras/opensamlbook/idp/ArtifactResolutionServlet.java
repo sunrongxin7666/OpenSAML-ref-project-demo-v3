@@ -1,10 +1,38 @@
 package no.steras.opensamlbook.idp;
 
+import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
+import net.shibboleth.utilities.java.support.xml.BasicParserPool;
+import net.shibboleth.utilities.java.support.xml.XMLParserException;
 import no.steras.opensamlbook.OpenSAMLUtils;
 import no.steras.opensamlbook.sp.SPConstants;
 import no.steras.opensamlbook.sp.SPCredentials;
 import org.apache.xml.security.utils.EncryptionConstants;
 import org.joda.time.DateTime;
+import org.opensaml.core.xml.XMLObject;
+import org.opensaml.core.xml.config.XMLObjectProviderRegistrySupport;
+import org.opensaml.core.xml.io.*;
+import org.opensaml.core.xml.schema.XSString;
+import org.opensaml.core.xml.schema.impl.XSStringBuilder;
+import org.opensaml.messaging.context.MessageContext;
+import org.opensaml.messaging.decoder.MessageDecodingException;
+import org.opensaml.messaging.encoder.MessageEncodingException;
+import org.opensaml.saml.common.SAMLObject;
+import org.opensaml.saml.saml2.binding.decoding.impl.HTTPSOAP11Decoder;
+import org.opensaml.saml.saml2.binding.encoding.impl.HTTPSOAP11Encoder;
+import org.opensaml.saml.saml2.core.*;
+import org.opensaml.saml.saml2.encryption.Encrypter;
+import org.opensaml.soap.messaging.context.SOAP11Context;
+import org.opensaml.soap.soap11.Body;
+import org.opensaml.soap.soap11.Envelope;
+import org.opensaml.soap.soap11.decoder.http.impl.EnvelopeBodyHandler;
+import org.opensaml.xmlsec.EncryptionParameters;
+import org.opensaml.xmlsec.encryption.support.DataEncryptionParameters;
+import org.opensaml.xmlsec.encryption.support.EncryptionException;
+import org.opensaml.xmlsec.encryption.support.KeyEncryptionParameters;
+import org.opensaml.xmlsec.signature.Signature;
+import org.opensaml.xmlsec.signature.support.SignatureConstants;
+import org.opensaml.xmlsec.signature.support.SignatureException;
+import org.opensaml.xmlsec.signature.support.Signer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
@@ -18,6 +46,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.soap.SOAPEnvelope;
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerException;
@@ -36,57 +65,59 @@ import java.security.spec.ECField;
  * Created by Privat on 4/6/14.
  */
 public class ArtifactResolutionServlet extends HttpServlet {
-   /* private static Logger logger = LoggerFactory.getLogger(ArtifactResolutionServlet.class);
+    private static Logger logger = LoggerFactory.getLogger(ArtifactResolutionServlet.class);
 
     @Override
     protected void doPost(final HttpServletRequest req, final HttpServletResponse resp) throws ServletException, IOException {
+        System.out.println("recieved artifactResolve");
+        HTTPSOAP11Decoder decoder = new HTTPSOAP11Decoder();
+        decoder.setHttpServletRequest(req);
+
+
+        try {
+            BasicParserPool parserPool = new BasicParserPool();
+            parserPool.initialize();
+            decoder.setParserPool(parserPool);
+            decoder.initialize();
+            decoder.decode();
+        } catch (MessageDecodingException e) {
+            e.printStackTrace();
+        } catch (ComponentInitializationException e) {
+            e.printStackTrace();
+        }
+        System.out.println(decoder.getMessageContext().getMessage());
+
         ArtifactResponse artifactResponse = buildArtifactResponse();
+
+        MessageContext<SAMLObject> context = new MessageContext<SAMLObject>();
+
+            context.setMessage(artifactResponse);
+
+
+
+        HTTPSOAP11Encoder encoder = new HTTPSOAP11Encoder();
+        encoder.setMessageContext(context);
+        encoder.setHttpServletResponse(resp);
+        try {
+            encoder.prepareContext();
+            encoder.initialize();
+            encoder.encode();
+        } catch (MessageEncodingException e) {
+            e.printStackTrace();
+        } catch (ComponentInitializationException e) {
+            e.printStackTrace();
+        }
+
+        /*ArtifactResponse artifactResponse = buildArtifactResponse();
         artifactResponse.setInResponseTo("Made up ID");
 
         printSAMLObject(wrapInSOAPEnvelope(artifactResponse), resp.getWriter());
-    }
-
-    public static ArtifactResolve unmarshallArtifactResolve(final InputStream input) {
-        try {
-            BasicParserPool ppMgr = new BasicParserPool();
-            ppMgr.setNamespaceAware(true);
-
-            Document soap = ppMgr.parse(input);
-
-            Element soapRoot = soap.getDocumentElement();
-
-            UnmarshallerFactory unmarshallerFactory = Configuration.getUnmarshallerFactory();
-            Unmarshaller unmarshaller = unmarshallerFactory.getUnmarshaller(soapRoot);
-
-            Envelope soapEnvelope = (Envelope)unmarshaller.unmarshall(soapRoot);
-
-            return (ArtifactResolve)soapEnvelope.getBody().getUnknownXMLObjects().get(0);
-        } catch (XMLParserException e) {
-            throw new RuntimeException(e);
-        } catch (UnmarshallingException e) {
-            throw new RuntimeException(e);
-        }
+        */
 
     }
 
-    public static org.w3c.dom.Element marshallSAMLObject(final SAMLObject object) {
-        org.w3c.dom.Element element = null;
-        try {
-            MarshallerFactory unMarshallerFactory = Configuration.getMarshallerFactory();
 
-            Marshaller marshaller = unMarshallerFactory.getMarshaller(object);
-
-            element = marshaller.marshall(object);
-        } catch (ClassCastException e) {
-            throw new IllegalArgumentException("The class does not implement the interface XMLObject", e);
-        } catch (MarshallingException e) {
-            throw new RuntimeException(e);
-        }
-
-        return element;
-    }
-
-    private ArtifactResponse buildArtifactResponse() {
+   private ArtifactResponse buildArtifactResponse() {
 
         ArtifactResponse artifactResponse = OpenSAMLUtils.buildSAMLObject(ArtifactResponse.class);
 
@@ -100,7 +131,7 @@ public class ArtifactResolutionServlet extends HttpServlet {
 
         Status status = OpenSAMLUtils.buildSAMLObject(Status.class);
         StatusCode statusCode = OpenSAMLUtils.buildSAMLObject(StatusCode.class);
-        statusCode.setValue(StatusCode.SUCCESS_URI);
+        statusCode.setValue(StatusCode.SUCCESS);
         status.setStatusCode(statusCode);
         artifactResponse.setStatus(status);
 
@@ -115,7 +146,7 @@ public class ArtifactResolutionServlet extends HttpServlet {
 
         Status status2 = OpenSAMLUtils.buildSAMLObject(Status.class);
         StatusCode statusCode2 = OpenSAMLUtils.buildSAMLObject(StatusCode.class);
-        statusCode2.setValue(StatusCode.SUCCESS_URI);
+        statusCode2.setValue(StatusCode.SUCCESS);
         status2.setStatusCode(statusCode2);
 
         response.setStatus(status2);
@@ -132,7 +163,7 @@ public class ArtifactResolutionServlet extends HttpServlet {
     }
 
     private EncryptedAssertion encryptAssertion(Assertion assertion) {
-        EncryptionParameters encryptionParameters = new EncryptionParameters();
+        DataEncryptionParameters encryptionParameters = new DataEncryptionParameters();
         encryptionParameters.setAlgorithm(EncryptionConstants.ALGO_ID_BLOCKCIPHER_AES128);
 
         KeyEncryptionParameters keyEncryptionParameters = new KeyEncryptionParameters();
@@ -159,7 +190,7 @@ public class ArtifactResolutionServlet extends HttpServlet {
         assertion.setSignature(signature);
 
         try {
-            Configuration.getMarshallerFactory().getMarshaller(assertion).marshall(assertion);
+            XMLObjectProviderRegistrySupport.getMarshallerFactory().getMarshaller(assertion).marshall(assertion);
         } catch (MarshallingException e) {
             throw new RuntimeException(e);
         }
@@ -249,7 +280,7 @@ public class ArtifactResolutionServlet extends HttpServlet {
 
         Attribute attributeUserName = OpenSAMLUtils.buildSAMLObject(Attribute.class);
 
-        XSStringBuilder stringBuilder = (XSStringBuilder)Configuration.getBuilderFactory().getBuilder(XSString.TYPE_NAME);
+        XSStringBuilder stringBuilder = (XSStringBuilder)XMLObjectProviderRegistrySupport.getBuilderFactory().getBuilder(XSString.TYPE_NAME);
         XSString userNameValue = stringBuilder.buildObject(AttributeValue.DEFAULT_ELEMENT_NAME, XSString.TYPE_NAME);
         userNameValue.setValue("bob");
 
@@ -279,32 +310,4 @@ public class ArtifactResolutionServlet extends HttpServlet {
 
         return envelope;
     }
-
-
-    public static void printSAMLObject(final XMLObject object, final PrintWriter writer) {
-        try {
-            DocumentBuilder builder;
-            DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-            factory.setNamespaceAware(true);
-
-            builder = factory.newDocumentBuilder();
-
-            org.w3c.dom.Document document = builder.newDocument();
-            Marshaller out = Configuration.getMarshallerFactory().getMarshaller(object);
-            out.marshall(object, document);
-
-            Transformer transformer = TransformerFactory.newInstance().newTransformer();
-            transformer.setOutputProperty(OutputKeys.INDENT, "yes");
-            StreamResult result = new StreamResult(writer);
-            DOMSource source = new DOMSource(document);
-            transformer.transform(source, result);
-        } catch (ParserConfigurationException e) {
-            e.printStackTrace();
-        } catch (MarshallingException e) {
-            e.printStackTrace();
-        } catch (TransformerException e) {
-            e.printStackTrace();
-        }
-    }*/
-
 }

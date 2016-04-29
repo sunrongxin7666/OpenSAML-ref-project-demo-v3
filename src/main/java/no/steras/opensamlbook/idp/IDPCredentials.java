@@ -39,5 +39,5 @@ public class IDPCredentials {
     public static Credential getCredential() {
         return credential;
     }
-    
+
 }

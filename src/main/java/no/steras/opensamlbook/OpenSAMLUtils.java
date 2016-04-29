@@ -6,6 +6,8 @@ import org.opensaml.core.xml.XMLObjectBuilderFactory;
 import org.opensaml.core.xml.config.XMLObjectProviderRegistrySupport;
 import org.opensaml.core.xml.io.Marshaller;
 import org.opensaml.core.xml.io.MarshallingException;
+import org.opensaml.soap.soap11.Body;
+import org.opensaml.soap.soap11.Envelope;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
@@ -81,8 +83,9 @@ public class OpenSAMLUtils {
         } catch (TransformerException e) {
             logger.error(e.getMessage(), e);
         }
+
     }
-/*
+
     public static Envelope wrapInSOAPEnvelope(final XMLObject xmlObject) throws IllegalAccessException {
         Envelope envelope = OpenSAMLUtils.buildSAMLObject(Envelope.class);
         Body body = OpenSAMLUtils.buildSAMLObject(Body.class);
@@ -93,5 +96,5 @@ public class OpenSAMLUtils {
 
         return envelope;
     }
-    */
+
 }
