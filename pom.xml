@@ -92,5 +92,16 @@
             <version>1.2</version>
         </dependency>
     </dependencies>
-
+<build>
+    <plugins>
+        <plugin>
+            <groupId>org.apache.tomcat.maven</groupId>
+            <artifactId>tomcat7-maven-plugin</artifactId>
+            <configuration>
+                <path>/${project.name}</path>
+                <serverXml>src/main/resources/server.xml</serverXml>
+            </configuration>
+        </plugin>
+    </plugins>
+</build>
 </project>
