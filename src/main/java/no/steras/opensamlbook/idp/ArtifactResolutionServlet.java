@@ -69,7 +69,7 @@ public class ArtifactResolutionServlet extends HttpServlet {
 
     @Override
     protected void doPost(final HttpServletRequest req, final HttpServletResponse resp) throws ServletException, IOException {
-        System.out.println("recieved artifactResolve");
+        logger.debug("recieved artifactResolve");
         HTTPSOAP11Decoder decoder = new HTTPSOAP11Decoder();
         decoder.setHttpServletRequest(req);
 
@@ -85,8 +85,9 @@ public class ArtifactResolutionServlet extends HttpServlet {
         } catch (ComponentInitializationException e) {
             e.printStackTrace();
         }
-        System.out.println(decoder.getMessageContext().getMessage());
 
+
+        OpenSAMLUtils.logSAMLObject(decoder.getMessageContext().getMessage());
         ArtifactResponse artifactResponse = buildArtifactResponse();
 
         MessageContext<SAMLObject> context = new MessageContext<SAMLObject>();
@@ -108,11 +109,6 @@ public class ArtifactResolutionServlet extends HttpServlet {
             e.printStackTrace();
         }
 
-        /*ArtifactResponse artifactResponse = buildArtifactResponse();
-        artifactResponse.setInResponseTo("Made up ID");
-
-        printSAMLObject(wrapInSOAPEnvelope(artifactResponse), resp.getWriter());
-        */
 
     }
 

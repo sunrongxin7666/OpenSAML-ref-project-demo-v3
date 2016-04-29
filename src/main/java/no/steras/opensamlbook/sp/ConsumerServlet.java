@@ -43,6 +43,8 @@ import org.opensaml.soap.common.SOAPException;
 import org.opensaml.soap.messaging.context.SOAP11Context;
 import org.opensaml.soap.soap11.Envelope;
 import org.opensaml.soap.soap11.decoder.http.impl.EnvelopeBodyHandler;
+import org.opensaml.xmlsec.SignatureSigningParameters;
+import org.opensaml.xmlsec.context.SecurityParametersContext;
 import org.opensaml.xmlsec.encryption.support.DecryptionException;
 import org.opensaml.xmlsec.encryption.support.InlineEncryptedKeyResolver;
 import org.opensaml.xmlsec.keyinfo.impl.StaticKeyInfoCredentialResolver;
@@ -76,7 +78,7 @@ public class ConsumerServlet extends HttpServlet {
         logger.info("Artifact: " + artifact.getArtifact());
 
         ArtifactResolve artifactResolve = buildArtifactResolve(artifact);
-        signArtifactResolve(artifactResolve);
+        //signArtifactResolve(artifactResolve);
         logger.info("Sending ArtifactResolve");
         logger.info("ArtifactResolve: ");
         //OpenSAMLUtils.logSAMLObject(artifactResolve);
@@ -132,27 +134,6 @@ public class ConsumerServlet extends HttpServlet {
 
     }
 
-    private void signArtifactResolve(ArtifactResolve artifactResolve) {
-        Signature signature = OpenSAMLUtils.buildSAMLObject(Signature.class);
-        signature.setSigningCredential(SPCredentials.getCredential());
-        signature.setSignatureAlgorithm(SignatureConstants.ALGO_ID_SIGNATURE_RSA_SHA1);
-        signature.setCanonicalizationAlgorithm(SignatureConstants.ALGO_ID_C14N_EXCL_OMIT_COMMENTS);
-
-        artifactResolve.setSignature(signature);
-
-        try {
-            XMLObjectProviderRegistrySupport.getMarshallerFactory().getMarshaller(artifactResolve).marshall(artifactResolve);
-        } catch (MarshallingException e) {
-            throw new RuntimeException(e);
-        }
-
-        try {
-            Signer.signObject(signature);
-        } catch (SignatureException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
     private void setAuthenticatedSession(HttpServletRequest req) {
         req.getSession().setAttribute(SPConstants.AUTHENTICATED_SESSION_ATTRIBUTE, true);
     }
@@ -193,30 +174,20 @@ public class ConsumerServlet extends HttpServlet {
     private ArtifactResponse sendAndReceiveArtifactResolve(final ArtifactResolve artifactResolve, HttpServletResponse servletResponse) {
         try {
 
-            //HTTPSOAP11Encoder encoder = new HTTPSOAP11Encoder();
             MessageContext<ArtifactResolve> contextout = new MessageContext<ArtifactResolve>();
-
-            SAMLPeerEntityContext peerEntityContext = contextout.getSubcontext(SAMLPeerEntityContext.class, true);
-            peerEntityContext.setEntityId(IDPConstants.IDP_ENTITY_ID);
-
-            SAMLEndpointContext endpointContext = peerEntityContext.getSubcontext(SAMLEndpointContext.class, true);
-            endpointContext.setEndpoint(getIPDArtifactResolutionEndpoint());
-
-            //SOAP11Context soapContext = contextout.getSubcontext(SOAP11Context.class, true);
 
             contextout.setMessage(artifactResolve);
 
+            SignatureSigningParameters signatureSigningParameters = new SignatureSigningParameters();
+            signatureSigningParameters.setSignatureAlgorithm(SignatureConstants.ALGO_ID_SIGNATURE_RSA_SHA256);
+            signatureSigningParameters.setSigningCredential(SPCredentials.getCredential());
+            signatureSigningParameters.setSignatureCanonicalizationAlgorithm(SignatureConstants.ALGO_ID_C14N_EXCL_OMIT_COMMENTS);
+
+            SecurityParametersContext securityParametersContext = contextout.getSubcontext(SecurityParametersContext.class, true);
+            securityParametersContext.setSignatureSigningParameters(signatureSigningParameters);
 
             InOutOperationContext<ArtifactResponse, ArtifactResolve> context = new ProfileRequestContext<ArtifactResponse, ArtifactResolve>();
             context.setOutboundMessageContext(contextout);
-
-            /*encoder.setMessageContext(context);
-            encoder.initialize();
-            encoder.prepareContext();
-            encoder.encode();
-*/
-
-
 
 
 
@@ -231,20 +202,18 @@ public class ConsumerServlet extends HttpServlet {
                             decoder
                     );
 
-
                     BasicMessageHandlerChain<SAMLObject> outboundPayloadHandler = new BasicMessageHandlerChain<SAMLObject>();
                     outboundPayloadHandler.setHandlers(Lists.<MessageHandler<SAMLObject>>newArrayList(
                             new SAMLOutboundProtocolMessageSigningHandler()));
                     pipeline.setOutboundPayloadHandler(outboundPayloadHandler);
-                    pipeline.setInboundHandler(new SAMLSOAPDecoderBodyHandler());
-
                     return pipeline;
                 }};
 
             HttpClientBuilder clientBuilder = new HttpClientBuilder();
+
             soapClient.setHttpClient(clientBuilder.buildClient());
             soapClient.send(IDPConstants.ARTIFACT_RESOLUTION_SERVICE, context);
-            System.out.println(context.getInboundMessageContext().getMessage());
+
             return context.getInboundMessageContext().getMessage();
         } catch (SecurityException e) {
             throw new RuntimeException(e);
@@ -285,12 +254,6 @@ public class ConsumerServlet extends HttpServlet {
         return artifactResolve;
     }
 
-    private Endpoint getIPDArtifactResolutionEndpoint() {
-        ArtifactResolutionService endpoint = OpenSAMLUtils.buildSAMLObject(ArtifactResolutionService.class);
-        endpoint.setBinding(SAMLConstants.SAML2_SOAP11_BINDING_URI);
-        endpoint.setLocation(IDPConstants.ARTIFACT_RESOLUTION_SERVICE);
 
-        return endpoint;
-    }
 
 }

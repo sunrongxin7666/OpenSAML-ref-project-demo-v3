@@ -1,6 +1,7 @@
 package no.steras.opensamlbook.idp;
 
 import no.steras.opensamlbook.OpenSAMLUtils;
+import no.steras.opensamlbook.sp.SPConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -16,7 +17,7 @@ import java.io.Writer;
  */
 public class SingleSignOnServlet extends HttpServlet {
     private static Logger logger = LoggerFactory.getLogger(SingleSignOnServlet.class);
-    private static final String ASSERTION_CONSUMER_SERVICE = "http://localhost:8080/webprofile-ref-project/sp/consumer";
+
 
 
     @Override
@@ -30,7 +31,7 @@ public class SingleSignOnServlet extends HttpServlet {
 
     @Override
     protected void doPost(final HttpServletRequest req, final HttpServletResponse resp) throws ServletException, IOException {
-        resp.sendRedirect(ASSERTION_CONSUMER_SERVICE + "?SAMLart=AAQAAMFbLinlXaCM%2BFIxiDwGOLAy2T71gbpO7ZhNzAgEANlB90ECfpNEVLg%3D");
+        resp.sendRedirect(SPConstants.ASSERTION_CONSUMER_SERVICE + "?SAMLart=AAQAAMFbLinlXaCM%2BFIxiDwGOLAy2T71gbpO7ZhNzAgEANlB90ECfpNEVLg%3D");
     }
 
 
