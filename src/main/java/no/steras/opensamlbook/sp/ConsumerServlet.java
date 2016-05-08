@@ -95,7 +95,9 @@ public class ConsumerServlet extends HttpServlet {
         ArtifactResponse artifactResponse = sendAndReceiveArtifactResolve(artifactResolve, resp);
         logger.info("ArtifactResponse received");
         logger.info("ArtifactResponse: ");
-       // OpenSAMLUtils.logSAMLObject(artifactResponse);
+        OpenSAMLUtils.logSAMLObject(artifactResponse);
+
+        validateDestinationAndLifetime(artifactResponse, req);
 
         EncryptedAssertion encryptedAssertion = getEncryptedAssertion(artifactResponse);
         Assertion assertion = decryptAssertion(encryptedAssertion);
@@ -109,6 +111,39 @@ public class ConsumerServlet extends HttpServlet {
 
         setAuthenticatedSession(req);
         redirectToGotoURL(req, resp);
+    }
+
+    private void validateDestinationAndLifetime(ArtifactResponse artifactResponse, HttpServletRequest request) {
+        MessageContext context = new MessageContext<ArtifactResponse>();
+        context.setMessage(artifactResponse);
+
+        SAMLMessageInfoContext messageInfoContext = context.getSubcontext(SAMLMessageInfoContext.class, true);
+        messageInfoContext.setMessageIssueInstant(artifactResponse.getIssueInstant());
+
+        MessageLifetimeSecurityHandler lifetimeSecurityHandler = new MessageLifetimeSecurityHandler();
+        lifetimeSecurityHandler.setClockSkew(1000);
+        lifetimeSecurityHandler.setMessageLifetime(2000);
+        lifetimeSecurityHandler.setRequiredRule(true);
+
+        ReceivedEndpointSecurityHandler receivedEndpointSecurityHandler = new ReceivedEndpointSecurityHandler();
+        receivedEndpointSecurityHandler.setHttpServletRequest(request);
+        List handlers = new ArrayList<MessageHandler>();
+        handlers.add(lifetimeSecurityHandler);
+        handlers.add(receivedEndpointSecurityHandler);
+
+        BasicMessageHandlerChain<ArtifactResponse> handlerChain = new BasicMessageHandlerChain<ArtifactResponse>();
+        handlerChain.setHandlers(handlers);
+
+        try {
+            handlerChain.initialize();
+            handlerChain.doInvoke(context);
+        } catch (ComponentInitializationException e) {
+            throw new RuntimeException(e);
+        } catch (MessageHandlerException e) {
+            throw new RuntimeException(e);
+        }
+
+
     }
 
     private Assertion decryptAssertion(EncryptedAssertion encryptedAssertion) {
