@@ -93,14 +93,13 @@ public class AccessFilter implements Filter {
 
         context.setMessage(authnRequest);
 
-
         encoder.setMessageContext(context);
         encoder.setHttpServletResponse(httpServletResponse);
 
         try {
             encoder.initialize();
         } catch (ComponentInitializationException e) {
-            e.printStackTrace();
+            throw new RuntimeException(e);
         }
 
         logger.info("AuthnRequest: ");
