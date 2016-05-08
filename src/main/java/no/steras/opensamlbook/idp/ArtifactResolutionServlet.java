@@ -2,13 +2,11 @@ package no.steras.opensamlbook.idp;
 
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.xml.BasicParserPool;
-import net.shibboleth.utilities.java.support.xml.XMLParserException;
 import no.steras.opensamlbook.OpenSAMLUtils;
 import no.steras.opensamlbook.sp.SPConstants;
 import no.steras.opensamlbook.sp.SPCredentials;
 import org.apache.xml.security.utils.EncryptionConstants;
 import org.joda.time.DateTime;
-import org.opensaml.core.xml.XMLObject;
 import org.opensaml.core.xml.config.XMLObjectProviderRegistrySupport;
 import org.opensaml.core.xml.io.*;
 import org.opensaml.core.xml.schema.XSString;
@@ -17,15 +15,12 @@ import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.messaging.decoder.MessageDecodingException;
 import org.opensaml.messaging.encoder.MessageEncodingException;
 import org.opensaml.saml.common.SAMLObject;
+import org.opensaml.saml.common.binding.security.impl.MessageLifetimeSecurityHandler;
 import org.opensaml.saml.saml2.binding.decoding.impl.HTTPSOAP11Decoder;
 import org.opensaml.saml.saml2.binding.encoding.impl.HTTPSOAP11Encoder;
 import org.opensaml.saml.saml2.core.*;
 import org.opensaml.saml.saml2.encryption.Encrypter;
-import org.opensaml.soap.messaging.context.SOAP11Context;
-import org.opensaml.soap.soap11.Body;
-import org.opensaml.soap.soap11.Envelope;
-import org.opensaml.soap.soap11.decoder.http.impl.EnvelopeBodyHandler;
-import org.opensaml.xmlsec.EncryptionParameters;
+
 import org.opensaml.xmlsec.encryption.support.DataEncryptionParameters;
 import org.opensaml.xmlsec.encryption.support.EncryptionException;
 import org.opensaml.xmlsec.encryption.support.KeyEncryptionParameters;
@@ -35,44 +30,23 @@ import org.opensaml.xmlsec.signature.support.SignatureException;
 import org.opensaml.xmlsec.signature.support.Signer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.xml.sax.SAXException;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.soap.SOAPEnvelope;
-import javax.xml.transform.OutputKeys;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerException;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.PrintWriter;
-import java.io.Writer;
-import java.security.NoSuchAlgorithmException;
-import java.security.NoSuchProviderException;
-import java.security.spec.ECField;
 
-/**
- * Created by Privat on 4/6/14.
- */
 public class ArtifactResolutionServlet extends HttpServlet {
     private static Logger logger = LoggerFactory.getLogger(ArtifactResolutionServlet.class);
 
     @Override
     protected void doPost(final HttpServletRequest req, final HttpServletResponse resp) throws ServletException, IOException {
-        logger.debug("recieved artifactResolve");
+        logger.debug("recieved artifactResolve:");
         HTTPSOAP11Decoder decoder = new HTTPSOAP11Decoder();
-        decoder.setHttpServletRequest(req);
 
+
+        decoder.setHttpServletRequest(req);
 
         try {
             BasicParserPool parserPool = new BasicParserPool();
@@ -81,20 +55,18 @@ public class ArtifactResolutionServlet extends HttpServlet {
             decoder.initialize();
             decoder.decode();
         } catch (MessageDecodingException e) {
-            e.printStackTrace();
+            throw new RuntimeException(e);
         } catch (ComponentInitializationException e) {
-            e.printStackTrace();
+            throw new RuntimeException(e);
         }
 
-
         OpenSAMLUtils.logSAMLObject(decoder.getMessageContext().getMessage());
+
+
         ArtifactResponse artifactResponse = buildArtifactResponse();
 
         MessageContext<SAMLObject> context = new MessageContext<SAMLObject>();
-
-            context.setMessage(artifactResponse);
-
-
+        context.setMessage(artifactResponse);
 
         HTTPSOAP11Encoder encoder = new HTTPSOAP11Encoder();
         encoder.setMessageContext(context);
@@ -104,9 +76,9 @@ public class ArtifactResolutionServlet extends HttpServlet {
             encoder.initialize();
             encoder.encode();
         } catch (MessageEncodingException e) {
-            e.printStackTrace();
+            throw new RuntimeException(e);
         } catch (ComponentInitializationException e) {
-            e.printStackTrace();
+            throw new RuntimeException(e);
         }
 
 
@@ -294,16 +266,5 @@ public class ArtifactResolutionServlet extends HttpServlet {
 
         return attributeStatement;
 
-    }
-
-    public static Envelope wrapInSOAPEnvelope(final XMLObject xmlObject) {
-        Envelope envelope = OpenSAMLUtils.buildSAMLObject(Envelope.class);
-        Body body = OpenSAMLUtils.buildSAMLObject(Body.class);
-
-        body.getUnknownXMLObjects().add(xmlObject);
-
-        envelope.setBody(body);
-
-        return envelope;
     }
 }

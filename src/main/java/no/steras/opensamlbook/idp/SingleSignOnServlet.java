@@ -1,6 +1,5 @@
 package no.steras.opensamlbook.idp;
 
-import no.steras.opensamlbook.OpenSAMLUtils;
 import no.steras.opensamlbook.sp.SPConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -12,13 +11,8 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.Writer;
 
-/**
- * Created by Privat on 4/6/14.
- */
 public class SingleSignOnServlet extends HttpServlet {
     private static Logger logger = LoggerFactory.getLogger(SingleSignOnServlet.class);
-
-
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {

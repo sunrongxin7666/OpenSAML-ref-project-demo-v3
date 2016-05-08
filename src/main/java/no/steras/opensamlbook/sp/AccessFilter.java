@@ -3,26 +3,25 @@ package no.steras.opensamlbook.sp;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import no.steras.opensamlbook.OpenSAMLUtils;
 import no.steras.opensamlbook.idp.IDPConstants;
+import org.apache.commons.lang.ObjectUtils;
 import org.joda.time.DateTime;
-import org.joda.time.chrono.ISOChronology;
 import org.opensaml.core.config.InitializationException;
 import org.opensaml.core.config.InitializationService;
-import org.opensaml.core.config.Initializer;
-import org.opensaml.messaging.context.InOutOperationContext;
 import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.messaging.encoder.MessageEncodingException;
-import org.opensaml.saml.common.SAMLObject;
 
+import org.opensaml.messaging.handler.MessageHandlerException;
+import org.opensaml.messaging.pipeline.servlet.BasicHttpServletMessagePipeline;
+import org.opensaml.messaging.pipeline.servlet.HttpServletMessagePipeline;
+import org.opensaml.saml.common.SAMLObject;
+import org.opensaml.saml.common.binding.security.impl.SAMLOutboundProtocolMessageSigningHandler;
 import org.opensaml.saml.common.messaging.context.SAMLEndpointContext;
-import org.opensaml.saml.common.messaging.context.SAMLMessageInfoContext;
 import org.opensaml.saml.common.messaging.context.SAMLPeerEntityContext;
 import org.opensaml.saml.common.xml.SAMLConstants;
 import org.opensaml.saml.saml2.binding.encoding.impl.HTTPRedirectDeflateEncoder;
 import org.opensaml.saml.saml2.core.*;
 import org.opensaml.saml.saml2.metadata.Endpoint;
 import org.opensaml.saml.saml2.metadata.SingleSignOnService;
-import org.opensaml.xmlsec.SecurityConfigurationSupport;
-import org.opensaml.xmlsec.SignatureSigningConfiguration;
 import org.opensaml.xmlsec.SignatureSigningParameters;
 import org.opensaml.xmlsec.context.SecurityParametersContext;
 import org.opensaml.xmlsec.signature.support.SignatureConstants;
@@ -44,10 +43,6 @@ public class AccessFilter implements Filter {
 
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
-        for (Provider jceProvider : Security.getProviders()) {
-            logger.info(jceProvider.getInfo());
-        }
-
         try {
             logger.info("Bootstrapping");
             InitializationService.initialize();
@@ -85,7 +80,6 @@ public class AccessFilter implements Filter {
         MessageContext context = new MessageContext();
 
         SAMLPeerEntityContext peerEntityContext = context.getSubcontext(SAMLPeerEntityContext.class, true);
-        peerEntityContext.setEntityId(IDPConstants.IDP_ENTITY_ID);
 
         SAMLEndpointContext endpointContext = peerEntityContext.getSubcontext(SAMLEndpointContext.class, true);
         endpointContext.setEndpoint(getIPDEndpoint());
@@ -163,10 +157,6 @@ public class AccessFilter implements Filter {
     }
 
     private String getSPIssuerValue() {
-        return SPConstants.SP_ENTITY_ID;
-    }
-
-    private String getSPNameQualifier() {
         return SPConstants.SP_ENTITY_ID;
     }
 

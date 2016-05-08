@@ -7,6 +7,7 @@ import net.shibboleth.utilities.java.support.xml.BasicParserPool;
 import no.steras.opensamlbook.OpenSAMLUtils;
 import no.steras.opensamlbook.idp.IDPConstants;
 import no.steras.opensamlbook.idp.IDPCredentials;
+import org.apache.xml.security.algorithms.MessageDigestAlgorithm;
 import org.joda.time.DateTime;
 import org.opensaml.core.xml.XMLObject;
 import org.opensaml.core.xml.config.XMLObjectProviderRegistrySupport;
@@ -16,6 +17,7 @@ import org.opensaml.messaging.context.InOutOperationContext;
 import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.messaging.encoder.MessageEncodingException;
 import org.opensaml.messaging.handler.MessageHandler;
+import org.opensaml.messaging.handler.MessageHandlerException;
 import org.opensaml.messaging.handler.impl.BasicMessageHandlerChain;
 import org.opensaml.messaging.pipeline.httpclient.BasicHttpClientMessagePipeline;
 import org.opensaml.messaging.pipeline.httpclient.HttpClientMessagePipeline;
@@ -23,8 +25,12 @@ import org.opensaml.messaging.pipeline.httpclient.HttpClientMessagePipelineFacto
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.opensaml.saml.common.SAMLObject;
 import org.opensaml.saml.common.binding.impl.SAMLSOAPDecoderBodyHandler;
+import org.opensaml.saml.common.binding.security.impl.MessageLifetimeSecurityHandler;
+import org.opensaml.saml.common.binding.security.impl.ReceivedEndpointSecurityHandler;
 import org.opensaml.saml.common.binding.security.impl.SAMLOutboundProtocolMessageSigningHandler;
+import org.opensaml.saml.common.binding.security.impl.SAMLProtocolMessageXMLSignatureSecurityHandler;
 import org.opensaml.saml.common.messaging.context.SAMLEndpointContext;
+import org.opensaml.saml.common.messaging.context.SAMLMessageInfoContext;
 import org.opensaml.saml.common.messaging.context.SAMLPeerEntityContext;
 import org.opensaml.saml.common.xml.SAMLConstants;
 import org.opensaml.saml.saml2.binding.decoding.impl.HttpClientResponseSOAP11Decoder;
@@ -64,6 +70,10 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.xml.bind.ValidationException;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 /**
  * Created by Privat on 4/6/14.
@@ -78,10 +88,9 @@ public class ConsumerServlet extends HttpServlet {
         logger.info("Artifact: " + artifact.getArtifact());
 
         ArtifactResolve artifactResolve = buildArtifactResolve(artifact);
-        //signArtifactResolve(artifactResolve);
         logger.info("Sending ArtifactResolve");
         logger.info("ArtifactResolve: ");
-        //OpenSAMLUtils.logSAMLObject(artifactResolve);
+        OpenSAMLUtils.logSAMLObject(artifactResolve);
 
         ArtifactResponse artifactResponse = sendAndReceiveArtifactResolve(artifactResolve, resp);
         logger.info("ArtifactResponse received");
@@ -116,6 +125,7 @@ public class ConsumerServlet extends HttpServlet {
     }
 
     private void verifyAssertionSignature(Assertion assertion) {
+
         if (!assertion.isSigned()) {
             throw new RuntimeException("The SAML Assertion was not signed");
         }
@@ -218,15 +228,14 @@ public class ConsumerServlet extends HttpServlet {
         } catch (SecurityException e) {
             throw new RuntimeException(e);
         } catch (ComponentInitializationException e) {
-            e.printStackTrace();
+            throw new RuntimeException(e);
         } catch (MessageEncodingException e) {
-            e.printStackTrace();
+            throw new RuntimeException(e);
         } catch (IllegalAccessException e) {
-            e.printStackTrace();
+            throw new RuntimeException(e);
         } catch (Exception e) {
-            e.printStackTrace();
+            throw new RuntimeException(e);
         }
-        return null;
 
     }
 
