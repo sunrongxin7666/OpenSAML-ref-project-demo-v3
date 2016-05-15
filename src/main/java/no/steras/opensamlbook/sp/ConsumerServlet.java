@@ -241,16 +241,12 @@ public class ConsumerServlet extends HttpServlet {
                     HttpClientRequestSOAP11Encoder encoder = new HttpClientRequestSOAP11Encoder();
                     HttpClientResponseSOAP11Decoder decoder = new HttpClientResponseSOAP11Decoder();
 
-                    decoder.setBodyHandler(new SAMLSOAPDecoderBodyHandler());
                     BasicHttpClientMessagePipeline pipeline = new BasicHttpClientMessagePipeline(
                             encoder,
                             decoder
                     );
 
-                    BasicMessageHandlerChain<SAMLObject> outboundPayloadHandler = new BasicMessageHandlerChain<SAMLObject>();
-                    outboundPayloadHandler.setHandlers(Lists.<MessageHandler<SAMLObject>>newArrayList(
-                            new SAMLOutboundProtocolMessageSigningHandler()));
-                    pipeline.setOutboundPayloadHandler(outboundPayloadHandler);
+                    pipeline.setOutboundPayloadHandler(new SAMLOutboundProtocolMessageSigningHandler());
                     return pipeline;
                 }};
 

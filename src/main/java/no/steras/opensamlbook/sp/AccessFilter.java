@@ -88,8 +88,9 @@ public class AccessFilter implements Filter {
 
     private void redirectUserWithRequest(HttpServletResponse httpServletResponse, AuthnRequest authnRequest) {
 
-        HTTPRedirectDeflateEncoder encoder = new HTTPRedirectDeflateEncoder();
         MessageContext context = new MessageContext();
+
+        context.setMessage(authnRequest);
 
         SAMLPeerEntityContext peerEntityContext = context.getSubcontext(SAMLPeerEntityContext.class, true);
 
@@ -103,7 +104,7 @@ public class AccessFilter implements Filter {
 
         context.getSubcontext(SecurityParametersContext.class, true).setSignatureSigningParameters(signatureSigningParameters);
 
-        context.setMessage(authnRequest);
+        HTTPRedirectDeflateEncoder encoder = new HTTPRedirectDeflateEncoder();
 
         encoder.setMessageContext(context);
         encoder.setHttpServletResponse(httpServletResponse);
