@@ -23,6 +23,7 @@ import org.opensaml.saml.saml2.core.*;
 import org.opensaml.saml.saml2.metadata.Endpoint;
 import org.opensaml.saml.saml2.metadata.SingleSignOnService;
 import org.opensaml.xmlsec.SignatureSigningParameters;
+import org.opensaml.xmlsec.config.JavaCryptoValidationInitializer;
 import org.opensaml.xmlsec.context.SecurityParametersContext;
 import org.opensaml.xmlsec.signature.support.SignatureConstants;
 import org.slf4j.Logger;
@@ -43,8 +44,19 @@ public class AccessFilter implements Filter {
 
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
+        JavaCryptoValidationInitializer javaCryptoValidationInitializer = new JavaCryptoValidationInitializer();
         try {
-            logger.info("Bootstrapping");
+            javaCryptoValidationInitializer.init();
+        } catch (InitializationException e) {
+            e.printStackTrace();
+        }
+
+        for (Provider jceProvider : Security.getProviders()) {
+            logger.info(jceProvider.getInfo());
+        }
+
+        try {
+            logger.info("Initializing");
             InitializationService.initialize();
         } catch (InitializationException e) {
             throw new RuntimeException("Initialization failed");
