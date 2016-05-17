@@ -12,22 +12,6 @@
     <properties>
         <opensaml.version>3.2.0</opensaml.version>
     </properties>
-    <repositories>
-        <repository>
-            <id>shib-release</id>
-            <url>https://build.shibboleth.net/nexus/content/groups/public</url>
-            <snapshots>
-                <enabled>false</enabled>
-            </snapshots>
-        </repository>
-        <repository>
-            <id>shib-snapshot</id>
-            <url>https://build.shibboleth.net/nexus/content/repositories/snapshots</url>
-            <releases>
-                <enabled>false</enabled>
-            </releases>
-        </repository>
-    </repositories>
     <dependencies>
         <dependency>
             <groupId>org.opensaml</groupId>
@@ -64,26 +48,20 @@
             <artifactId>opensaml-soap-impl</artifactId>
             <version>${opensaml.version}</version>
         </dependency>
-
-        <dependency>
-			<groupId>xerces</groupId>
-			<artifactId>xercesImpl</artifactId>
-			<version>2.10.0</version>
-		</dependency>
          <dependency>
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-core</artifactId>
-            <version>1.0.13</version>
+            <version>1.1.7</version>
         </dependency>
         <dependency>
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-classic</artifactId>
-            <version>1.0.13</version>
+            <version>1.1.7</version>
         </dependency>
         <dependency>
             <groupId>javax.servlet</groupId>
-            <artifactId>servlet-api</artifactId>
-            <version>2.5</version>
+            <artifactId>javax.servlet-api</artifactId>
+            <version>3.1.0</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
@@ -92,4 +70,10 @@
             <version>1.2</version>
         </dependency>
     </dependencies>
+    <repositories>
+        <repository>
+            <id>shib-release</id>
+            <url>https://build.shibboleth.net/nexus/content/repositories/releases</url>
+        </repository>
+    </repositories>
 </project>
