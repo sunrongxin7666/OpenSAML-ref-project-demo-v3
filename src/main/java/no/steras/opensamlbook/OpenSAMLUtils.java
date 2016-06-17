@@ -85,16 +85,4 @@ public class OpenSAMLUtils {
         }
 
     }
-
-    public static Envelope wrapInSOAPEnvelope(final XMLObject xmlObject) throws IllegalAccessException {
-        Envelope envelope = OpenSAMLUtils.buildSAMLObject(Envelope.class);
-        Body body = OpenSAMLUtils.buildSAMLObject(Body.class);
-
-        body.getUnknownXMLObjects().add(xmlObject);
-
-        envelope.setBody(body);
-
-        return envelope;
-    }
-
 }

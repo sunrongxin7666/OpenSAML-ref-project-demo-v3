@@ -169,7 +169,6 @@ public class ConsumerServlet extends HttpServlet {
             SAMLSignatureProfileValidator profileValidator = new SAMLSignatureProfileValidator();
             profileValidator.validate(assertion.getSignature());
 
-
             SignatureValidator.validate(assertion.getSignature(), IDPCredentials.getCredential());
 
             logger.info("SAML Assertion signature verified");
@@ -178,6 +177,7 @@ public class ConsumerServlet extends HttpServlet {
         }
 
     }
+
 
     private void setAuthenticatedSession(HttpServletRequest req) {
         req.getSession().setAttribute(SPConstants.AUTHENTICATED_SESSION_ATTRIBUTE, true);
