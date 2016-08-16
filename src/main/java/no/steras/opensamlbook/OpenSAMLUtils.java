@@ -58,28 +58,14 @@ public class OpenSAMLUtils {
 
     public static void logSAMLObject(final XMLObject object) {
         try {
-            DocumentBuilder builder;
-            DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-            factory.setNamespaceAware(true);
-
-            builder = factory.newDocumentBuilder();
-
-            Document document = builder.newDocument();
-            Marshaller out = XMLObjectProviderRegistrySupport.getMarshallerFactory().getMarshaller(object);
-            out.marshall(object, document);
-
             Transformer transformer = TransformerFactory.newInstance().newTransformer();
             transformer.setOutputProperty(OutputKeys.INDENT, "yes");
             StreamResult result = new StreamResult(new StringWriter());
-            DOMSource source = new DOMSource(document);
+            DOMSource source = new DOMSource(object.getDOM());
             transformer.transform(source, result);
             String xmlString = result.getWriter().toString();
 
             logger.info(xmlString);
-        } catch (ParserConfigurationException e) {
-            logger.error(e.getMessage(), e);
-        } catch (MarshallingException e) {
-            logger.error(e.getMessage(), e);
         } catch (TransformerException e) {
             logger.error(e.getMessage(), e);
         }
