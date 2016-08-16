@@ -42,7 +42,6 @@ import java.security.Security;
 public class AccessFilter implements Filter {
     private static Logger logger = LoggerFactory.getLogger(AccessFilter.class);
 
-    @Override
     public void init(FilterConfig filterConfig) throws ServletException {
         JavaCryptoValidationInitializer javaCryptoValidationInitializer = new JavaCryptoValidationInitializer();
         try {
@@ -63,7 +62,6 @@ public class AccessFilter implements Filter {
         }
     }
 
-    @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
         HttpServletRequest httpServletRequest = (HttpServletRequest)request;
         HttpServletResponse httpServletResponse = (HttpServletResponse)response;
@@ -188,8 +186,6 @@ public class AccessFilter implements Filter {
         return endpoint;
     }
 
-
-    @Override
     public void destroy() {
 
     }
