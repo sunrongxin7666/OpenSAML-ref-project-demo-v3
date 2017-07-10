@@ -20,9 +20,9 @@ mvn tomcat:run
 项目启动之后，访问如下网址：
 http://localhost:8080/webprofile-ref-project/app/appservlet
 这是一个SP的模拟，第一次访问该网址时将会跳转到IDP，进行认证流程。
-![IDP](./1499671904812.png)
+![IDP](https://github.com/sunrongxin7666/OpenSAML-ref-project-demo-v3/blob/master/shortcut/1499671904812.png)
 
 点击“Authenticate”按钮将通过认证，并重定向回SP,
-![SP](./1499672009116.png)
+![SP](https://github.com/sunrongxin7666/OpenSAML-ref-project-demo-v3/blob/master/shortcut/1499672009116.png)
 
 到此为止整个SAML协议的流程及完成了，相关日志信息会在控制台中输出。
