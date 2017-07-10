@@ -28,7 +28,7 @@ import org.opensaml.xmlsec.signature.Signature;
 import org.opensaml.xmlsec.signature.support.SignatureConstants;
 import org.opensaml.xmlsec.signature.support.SignatureException;
 import org.opensaml.xmlsec.signature.support.Signer;
-import org.slf4j.Logger;
+import ch.qos.logback.classic.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.servlet.ServletException;
@@ -38,7 +38,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 public class ArtifactResolutionServlet extends HttpServlet {
-    private static Logger logger = LoggerFactory.getLogger(ArtifactResolutionServlet.class);
+    private static Logger logger = (Logger) LoggerFactory.getLogger(ArtifactResolutionServlet.class);
 
     @Override
     protected void doPost(final HttpServletRequest req, final HttpServletResponse resp) throws ServletException, IOException {
@@ -142,8 +142,7 @@ public class ArtifactResolutionServlet extends HttpServlet {
         encrypter.setKeyPlacement(Encrypter.KeyPlacement.INLINE);
 
         try {
-            EncryptedAssertion encryptedAssertion = encrypter.encrypt(assertion);
-            return encryptedAssertion;
+            return encrypter.encrypt(assertion);
         } catch (EncryptionException e) {
             throw new RuntimeException(e);
         }
@@ -158,6 +157,7 @@ public class ArtifactResolutionServlet extends HttpServlet {
         assertion.setSignature(signature);
 
         try {
+            //noinspection ConstantConditions =》marshall 要求输入Nonnull且输出为Nonull；
             XMLObjectProviderRegistrySupport.getMarshallerFactory().getMarshaller(assertion).marshall(assertion);
         } catch (MarshallingException e) {
             throw new RuntimeException(e);
@@ -249,6 +249,7 @@ public class ArtifactResolutionServlet extends HttpServlet {
         Attribute attributeUserName = OpenSAMLUtils.buildSAMLObject(Attribute.class);
 
         XSStringBuilder stringBuilder = (XSStringBuilder)XMLObjectProviderRegistrySupport.getBuilderFactory().getBuilder(XSString.TYPE_NAME);
+        assert stringBuilder != null;
         XSString userNameValue = stringBuilder.buildObject(AttributeValue.DEFAULT_ELEMENT_NAME, XSString.TYPE_NAME);
         userNameValue.setValue("bob");
 
