@@ -38,10 +38,12 @@ import java.security.Security;
 
 /**
  * The filter intercepts the user and start the SAML authentication if it is not authenticated
+ * 认证过虑
  */
 public class AccessFilter implements Filter {
     private static Logger logger = LoggerFactory.getLogger(AccessFilter.class);
 
+    //初始化密码配置
     public void init(FilterConfig filterConfig) throws ServletException {
         JavaCryptoValidationInitializer javaCryptoValidationInitializer = new JavaCryptoValidationInitializer();
         try {
