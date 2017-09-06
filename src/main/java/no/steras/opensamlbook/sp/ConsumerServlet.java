@@ -87,16 +87,22 @@ public class ConsumerServlet extends HttpServlet {
         Artifact artifact = buildArtifactFromRequest(req);
         logger.info("Artifact: " + artifact.getArtifact());
 
+        //开始创建ArtifactResolve;
         ArtifactResolve artifactResolve = buildArtifactResolve(artifact);
         logger.info("Sending ArtifactResolve");
         logger.info("ArtifactResolve: ");
         OpenSAMLUtils.logSAMLObject(artifactResolve);
 
+        // 发送ArtifactResolve
+        // SOAP消息发送之后，会同步等待Response返回或者超时。
+        // 当Response返回时，SAML消息便可或得到：
         ArtifactResponse artifactResponse = sendAndReceiveArtifactResolve(artifactResolve, resp);
         logger.info("ArtifactResponse received");
         logger.info("ArtifactResponse: ");
         OpenSAMLUtils.logSAMLObject(artifactResponse);
 
+
+        //
         validateDestinationAndLifetime(artifactResponse, req);
 
         EncryptedAssertion encryptedAssertion = getEncryptedAssertion(artifactResponse);
@@ -114,6 +120,7 @@ public class ConsumerServlet extends HttpServlet {
     }
 
     private void validateDestinationAndLifetime(ArtifactResponse artifactResponse, HttpServletRequest request) {
+
         MessageContext context = new MessageContext<ArtifactResponse>();
         context.setMessage(artifactResponse);
 
@@ -216,40 +223,50 @@ public class ConsumerServlet extends HttpServlet {
         return response.getEncryptedAssertions().get(0);
     }
 
+    /**
+     * 使用SOAP协议发送 ArtifactResolve
+     */
     private ArtifactResponse sendAndReceiveArtifactResolve(final ArtifactResolve artifactResolve, HttpServletResponse servletResponse) {
         try {
 
             MessageContext<ArtifactResolve> contextout = new MessageContext<ArtifactResolve>();
 
             contextout.setMessage(artifactResolve);
-
+            //加入数据签名以增强安全性
             SignatureSigningParameters signatureSigningParameters = new SignatureSigningParameters();
             signatureSigningParameters.setSignatureAlgorithm(SignatureConstants.ALGO_ID_SIGNATURE_RSA_SHA256);
             signatureSigningParameters.setSigningCredential(SPCredentials.getCredential());
             signatureSigningParameters.setSignatureCanonicalizationAlgorithm(SignatureConstants.ALGO_ID_C14N_EXCL_OMIT_COMMENTS);
 
             SecurityParametersContext securityParametersContext = contextout.getSubcontext(SecurityParametersContext.class, true);
-            securityParametersContext.setSignatureSigningParameters(signatureSigningParameters);
+            if (securityParametersContext != null) {
+                securityParametersContext.setSignatureSigningParameters(signatureSigningParameters);
+            }
 
+            //创建InOutOperationContext来处理输入输出的信息
             InOutOperationContext<ArtifactResponse, ArtifactResolve> context = new ProfileRequestContext<ArtifactResponse, ArtifactResolve>();
             context.setOutboundMessageContext(contextout);
 
 
-
-            AbstractPipelineHttpSOAPClient<SAMLObject, SAMLObject> soapClient = new AbstractPipelineHttpSOAPClient() {
+            //为了能发送SOAP消息，还需要设置SOAP Client。
+            // 这个Client将会调用消息的处理器，编码器以及解码等来传送消息
+            AbstractPipelineHttpSOAPClient<SAMLObject, SAMLObject> soapClient = new AbstractPipelineHttpSOAPClient<SAMLObject, SAMLObject>() {
+                @Nonnull
                 protected HttpClientMessagePipeline newPipeline() throws SOAPException {
+                    //创建输入输出用的编码器和解码器
                     HttpClientRequestSOAP11Encoder encoder = new HttpClientRequestSOAP11Encoder();
                     HttpClientResponseSOAP11Decoder decoder = new HttpClientResponseSOAP11Decoder();
-
+                    //创建管道
                     BasicHttpClientMessagePipeline pipeline = new BasicHttpClientMessagePipeline(
                             encoder,
                             decoder
                     );
-
+                    //为输出的内容签名
                     pipeline.setOutboundPayloadHandler(new SAMLOutboundProtocolMessageSigningHandler());
                     return pipeline;
                 }};
 
+            // HTTP帮助SOAPClient编码和解码
             HttpClientBuilder clientBuilder = new HttpClientBuilder();
 
             soapClient.setHttpClient(clientBuilder.buildClient());
@@ -270,6 +287,8 @@ public class ConsumerServlet extends HttpServlet {
 
     }
 
+    /**SAML消息中有敏感信息
+     */
     private Artifact buildArtifactFromRequest(final HttpServletRequest req) {
         Artifact artifact = OpenSAMLUtils.buildSAMLObject(Artifact.class);
         artifact.setArtifact(req.getParameter("SAMLart"));
@@ -278,15 +297,16 @@ public class ConsumerServlet extends HttpServlet {
 
     private ArtifactResolve buildArtifactResolve(final Artifact artifact) {
         ArtifactResolve artifactResolve = OpenSAMLUtils.buildSAMLObject(ArtifactResolve.class);
-
+        //Issuer：发送方的身份表示，同AuthnRequest中的issuer;
         Issuer issuer = OpenSAMLUtils.buildSAMLObject(Issuer.class);
         issuer.setValue(SPConstants.SP_ENTITY_ID);
         artifactResolve.setIssuer(issuer);
 
+        //Time of the Request
         artifactResolve.setIssueInstant(new DateTime());
-
+        //ID of the request:
         artifactResolve.setID(OpenSAMLUtils.generateSecureRandomId());
-
+        //destination URL
         artifactResolve.setDestination(IDPConstants.ARTIFACT_RESOLUTION_SERVICE);
 
         artifactResolve.setArtifact(artifact);

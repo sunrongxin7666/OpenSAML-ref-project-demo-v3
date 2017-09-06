@@ -62,7 +62,6 @@ public class ArtifactResolutionServlet extends HttpServlet {
 
         OpenSAMLUtils.logSAMLObject(decoder.getMessageContext().getMessage());
 
-
         ArtifactResponse artifactResponse = buildArtifactResponse();
 
         MessageContext<SAMLObject> context = new MessageContext<SAMLObject>();
@@ -130,6 +129,9 @@ public class ArtifactResolutionServlet extends HttpServlet {
         return artifactResponse;
     }
 
+    /**
+     * 加密断言
+     */
     private EncryptedAssertion encryptAssertion(Assertion assertion) {
         DataEncryptionParameters encryptionParameters = new DataEncryptionParameters();
         encryptionParameters.setAlgorithm(EncryptionConstants.ALGO_ID_BLOCKCIPHER_AES128);
