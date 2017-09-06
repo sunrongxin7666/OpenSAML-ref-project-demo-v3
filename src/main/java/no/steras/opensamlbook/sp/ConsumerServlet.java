@@ -127,11 +127,13 @@ public class ConsumerServlet extends HttpServlet {
         SAMLMessageInfoContext messageInfoContext = context.getSubcontext(SAMLMessageInfoContext.class, true);
         messageInfoContext.setMessageIssueInstant(artifactResponse.getIssueInstant());
 
+        //生命周期验证，要求SAMLMessageInfoContext包含issue time;
         MessageLifetimeSecurityHandler lifetimeSecurityHandler = new MessageLifetimeSecurityHandler();
         lifetimeSecurityHandler.setClockSkew(1000);
         lifetimeSecurityHandler.setMessageLifetime(2000);
         lifetimeSecurityHandler.setRequiredRule(true);
 
+        //验证消息目的地址，要求base message context包含SAML消息，必需的信息可以从中提取出来
         ReceivedEndpointSecurityHandler receivedEndpointSecurityHandler = new ReceivedEndpointSecurityHandler();
         receivedEndpointSecurityHandler.setHttpServletRequest(request);
         List handlers = new ArrayList<MessageHandler>();
