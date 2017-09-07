@@ -101,11 +101,11 @@ public class ConsumerServlet extends HttpServlet {
         logger.info("ArtifactResponse: ");
         OpenSAMLUtils.logSAMLObject(artifactResponse);
 
-
-        //
+        //验证目的地址和有效期；
         validateDestinationAndLifetime(artifactResponse, req);
 
         EncryptedAssertion encryptedAssertion = getEncryptedAssertion(artifactResponse);
+        //获得解密后的断言；
         Assertion assertion = decryptAssertion(encryptedAssertion);
         verifyAssertionSignature(assertion);
         logger.info("Decrypted Assertion: ");
@@ -155,6 +155,10 @@ public class ConsumerServlet extends HttpServlet {
 
     }
 
+    /**
+     * 解密断言
+     * @param encryptedAssertion 加密的断言
+     */
     private Assertion decryptAssertion(EncryptedAssertion encryptedAssertion) {
         StaticKeyInfoCredentialResolver keyInfoCredentialResolver = new StaticKeyInfoCredentialResolver(SPCredentials.getCredential());
 
