@@ -80,7 +80,8 @@ public class AccessFilter implements Filter {
 
         // 如果用户已经通过身份鉴别，则session中会有AUTHENTICATED_SESSION_ATTRIBUTE，
         // 此时用户是已经被认证的，过滤器应该不对该操作做任何处理；
-        if (httpServletRequest.getSession().getAttribute(SPConstants.AUTHENTICATED_SESSION_ATTRIBUTE) != null) {
+        if (httpServletRequest.getSession()
+                .getAttribute(SPConstants.AUTHENTICATED_SESSION_ATTRIBUTE) != null) {
             chain.doFilter(request, response);
         } else { // 反之，则意味着需要开启鉴别流程：保留当前的目标URL，然后重定向到IDP。
             setGotoURLOnSession(httpServletRequest);

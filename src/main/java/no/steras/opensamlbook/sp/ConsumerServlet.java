@@ -160,9 +160,12 @@ public class ConsumerServlet extends HttpServlet {
      * @param encryptedAssertion 加密的断言
      */
     private Assertion decryptAssertion(EncryptedAssertion encryptedAssertion) {
-        StaticKeyInfoCredentialResolver keyInfoCredentialResolver = new StaticKeyInfoCredentialResolver(SPCredentials.getCredential());
+        StaticKeyInfoCredentialResolver keyInfoCredentialResolver
+                = new StaticKeyInfoCredentialResolver(SPCredentials.getCredential());
 
-        Decrypter decrypter = new Decrypter(null, keyInfoCredentialResolver, new InlineEncryptedKeyResolver());
+        Decrypter decrypter = new Decrypter(null,
+                keyInfoCredentialResolver,
+                new InlineEncryptedKeyResolver());
         decrypter.setRootInNewDocument(true);
 
         try {
