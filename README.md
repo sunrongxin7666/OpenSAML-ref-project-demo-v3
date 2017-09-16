@@ -26,3 +26,11 @@ http://localhost:8080/webprofile-ref-project/app/appservlet
 ![SP](https://github.com/sunrongxin7666/OpenSAML-ref-project-demo-v3/blob/master/shortcut/1499672009116.png)
 
 到此为止整个SAML协议的流程及完成了，相关日志信息会在控制台中输出。
+
+此外本人还编写了一系列教程文章来介绍如何使用OpenSAML，欢迎阅读指正：
+
+>1. [SAML2.0入门指南](http://www.jianshu.com/p/636c1ee16eba),
+>2. [OpenSAML 使用引导 I : 简介](http://www.jianshu.com/p/d041935641b4)
+>3. [OpenSAML 使用引导 II : Service Provider 的实现之AuthnRequest](http://www.jianshu.com/p/6f61fa7be0b6)
+>4. [OpenSAML 使用引导 II : Service Provider 的实现之AuthnRequest](http://www.jianshu.com/p/6f61fa7be0b6)
+>5. [OpenSAMl 使用引导IV: 安全特性](http://www.jianshu.com/p/77bbc9758831)
