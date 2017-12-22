@@ -32,5 +32,5 @@ http://localhost:8080/webprofile-ref-project/app/appservlet
 >1. [SAML2.0入门指南](http://www.jianshu.com/p/636c1ee16eba),
 >2. [OpenSAML 使用引导 I : 简介](http://www.jianshu.com/p/d041935641b4)
 >3. [OpenSAML 使用引导 II : Service Provider 的实现之AuthnRequest](http://www.jianshu.com/p/6f61fa7be0b6)
->4. [OpenSAML 使用引导 II : Service Provider 的实现之AuthnRequest](http://www.jianshu.com/p/6f61fa7be0b6)
+>4. [OpenSAML 使用引导 III: Service Provider 的实现之Artifact与断言](https://www.jianshu.com/p/6c72408fa480)
 >5. [OpenSAMl 使用引导IV: 安全特性](http://www.jianshu.com/p/77bbc9758831)
