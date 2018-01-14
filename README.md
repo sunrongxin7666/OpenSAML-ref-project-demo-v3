@@ -1,4 +1,4 @@
-#OpenSAML-ref-project-demo-v3
+**OpenSAML-ref-project-demo-v3**
 这一个使用OpenSAML库的示例项目：
 一个很简单的网址，其充当SP；同时该项目还包括一个很简单的IDP；
 SAML协议的交互将在这二者之间展开。
@@ -34,3 +34,8 @@ http://localhost:8080/webprofile-ref-project/app/appservlet
 >3. [OpenSAML 使用引导 II : Service Provider 的实现之AuthnRequest](http://www.jianshu.com/p/6f61fa7be0b6)
 >4. [OpenSAML 使用引导 III: Service Provider 的实现之Artifact与断言](https://www.jianshu.com/p/6c72408fa480)
 >5. [OpenSAMl 使用引导IV: 安全特性](http://www.jianshu.com/p/77bbc9758831)
+
+**TODO**
+1. OpenSAML在SpringMCV框架中的使用；
+2. OpenSAML在Spring Security框架中国的使用；
+3. 增加HTTP Redirect模式下的示例；
