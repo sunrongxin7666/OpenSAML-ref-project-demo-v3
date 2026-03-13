@@ -45,5 +45,15 @@
             <groupId>org.opensaml</groupId>
             <artifactId>opensaml-messaging-impl</artifactId>
         </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
+
+    <build>
+        <plugins>
+        </plugins>
+    </build>
 </project>
