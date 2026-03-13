@@ -1,0 +1,17 @@
+server:
+  port: 8080
+  servlet:
+    context-path: /
+
+saml:
+  sp:
+    entity-id: TestSP
+    assertion-consumer-service: http://localhost:8080/sp/consumer
+    keystore-path: classpath:SPKeystore.jks
+    keystore-password: password
+    key-alias: SPKey
+    key-password: password
+    idp-certificate-path: classpath:idp-certificate.crt
+    idp:
+      sso-service: http://localhost:9090/idp/singleSignOnService
+      artifact-resolution-service: http://localhost:9090/idp/artifactResolutionService

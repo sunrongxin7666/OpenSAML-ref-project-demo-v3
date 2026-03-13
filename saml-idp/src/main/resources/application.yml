@@ -1,0 +1,17 @@
+server:
+  port: 9090
+  servlet:
+    context-path: /
+
+saml:
+  idp:
+    entity-id: TestIDP
+    sso-service: http://localhost:9090/idp/singleSignOnService
+    artifact-resolution-service: http://localhost:9090/idp/artifactResolutionService
+    keystore-path: classpath:IDPKeystore.jks
+    keystore-password: password
+    key-alias: IDPKey
+    key-password: password
+    sp:
+      assertion-consumer-service: http://localhost:8080/sp/consumer
+      entity-id: TestSP
