@@ -17,19 +17,19 @@ class OpenSAMLUtilsTest {
     }
 
     @Test
-    void buildSAMLObject_成功构建AuthnRequest() {
+    void buildSAMLObject_shouldBuildAuthnRequestSuccessfully() {
         AuthnRequest authnRequest = OpenSAMLUtils.buildSAMLObject(AuthnRequest.class);
         assertThat(authnRequest).isNotNull();
     }
 
     @Test
-    void buildSAMLObject_无效类抛异常() {
+    void buildSAMLObject_shouldThrowExceptionForInvalidClass() {
         assertThatThrownBy(() -> OpenSAMLUtils.buildSAMLObject(String.class))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
-    void generateSecureRandomId_生成唯一ID() {
+    void generateSecureRandomId_shouldGenerateUniqueId() {
         String id1 = OpenSAMLUtils.generateSecureRandomId();
         String id2 = OpenSAMLUtils.generateSecureRandomId();
 
@@ -39,7 +39,7 @@ class OpenSAMLUtilsTest {
     }
 
     @Test
-    void logSAMLObject_不抛异常() {
+    void logSAMLObject_shouldNotThrowException() {
         Issuer issuer = OpenSAMLUtils.buildSAMLObject(Issuer.class);
         issuer.setValue("TestIssuer");
 

@@ -8,7 +8,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 class OpenSAMLConfigTest {
 
     @Test
-    void init_OpenSAML初始化成功() {
+    void init_shouldInitializeOpenSAMLSuccessfully() {
         OpenSAMLConfig config = new OpenSAMLConfig();
         config.init();
 
