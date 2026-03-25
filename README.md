@@ -3,7 +3,7 @@
 基于 OpenSAML 3.x 的 SAML 2.0 完整演示项目，已改造为 **Spring Boot 微服务架构**，包含独立运行的 IDP 和 SP 两个服务。
 
 项目地址：https://github.com/sunrongxin7666/OpenSAML-ref-project-demo-v3.git
-
+  
 原始项目来源：https://bitbucket.org/srasmusson/webprofile-ref-project-v3
 
 ---
@@ -217,7 +217,6 @@ System.setProperty("java.net.useSystemProxies", "false");
 ---
 
 ## 相关文章
-
 1. [SAML2.0入门指南](http://www.jianshu.com/p/636c1ee16eba)
 2. [OpenSAML 使用引导 I : 简介](http://www.jianshu.com/p/d041935641b4)
 3. [OpenSAML 使用引导 II : Service Provider 的实现之AuthnRequest](http://www.jianshu.com/p/6f61fa7be0b6)
